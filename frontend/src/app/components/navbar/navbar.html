@@ -1,0 +1,23 @@
+<nav class="navbar">
+  <div class="navbar-container">
+    <a routerLink="/quizzes" class="navbar-brand" (click)="closeMenu()">
+      <span class="brand-icon">Q</span>
+      <span class="brand-text">QuizMaster</span>
+    </a>
+
+    <button class="hamburger" (click)="toggleMenu()" [class.active]="menuOpen()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <div class="navbar-menu" [class.open]="menuOpen()">
+      <a routerLink="/quizzes" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="closeMenu()">
+        Browse Quizzes
+      </a>
+      <a routerLink="/quizzes/create" routerLinkActive="active" (click)="closeMenu()">
+        Create Quiz
+      </a>
+    </div>
+  </div>
+</nav>

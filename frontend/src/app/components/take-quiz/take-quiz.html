@@ -1,0 +1,141 @@
+@if (loading()) {
+  <div class="loading-spinner"></div>
+} @else if (!quiz()) {
+  <div class="card" style="text-align: center; padding: 2rem;">
+    <h2>Quiz not found</h2>
+  </div>
+} @else if (!started()) {
+  <div class="start-screen card">
+    <h1>{{ quiz()!.title }}</h1>
+    <p class="subtitle">{{ quiz()!.description }}</p>
+
+    <div class="quiz-info">
+      <div class="info-item">
+        <span class="info-value">{{ quiz()!.questions.length }}</span>
+        <span class="info-label">Questions</span>
+      </div>
+      @if (quiz()!.timeLimitMinutes) {
+        <div class="info-item">
+          <span class="info-value">{{ quiz()!.timeLimitMinutes }}</span>
+          <span class="info-label">Minutes</span>
+        </div>
+      }
+    </div>
+
+    <div class="form-group name-input">
+      <label class="form-label" for="playerName">Enter your name</label>
+      <input
+        id="playerName"
+        class="form-control"
+        type="text"
+        placeholder="Your name"
+        [ngModel]="playerName()"
+        (ngModelChange)="playerName.set($event)"
+        (keyup.enter)="startQuiz()"
+      />
+    </div>
+
+    <button
+      class="btn btn-primary btn-lg"
+      [disabled]="!playerName().trim()"
+      (click)="startQuiz()"
+    >
+      Start Quiz
+    </button>
+  </div>
+} @else {
+  <div class="quiz-container">
+    <!-- Header -->
+    <div class="quiz-header">
+      <div class="header-info">
+        <span class="question-counter">
+          Question {{ currentIndex() + 1 }} of {{ quiz()!.questions.length }}
+        </span>
+        @if (quiz()!.timeLimitMinutes) {
+          <span class="timer" [class.warning]="timeLeft() < 60" [class.danger]="timeLeft() < 30">
+            {{ formatTime(timeLeft()) }}
+          </span>
+        }
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="progress()"></div>
+      </div>
+    </div>
+
+    <!-- Question -->
+    @if (currentQuestion()) {
+      <div class="question-card card">
+        <div class="question-header">
+          <span class="badge badge-primary">{{ currentQuestion()!.questionType.replace('_', ' ') }}</span>
+          <span class="points">{{ currentQuestion()!.points }} pt{{ currentQuestion()!.points > 1 ? 's' : '' }}</span>
+        </div>
+        <h2 class="question-text">{{ currentQuestion()!.text }}</h2>
+
+        @if (currentQuestion()!.questionType === 'MULTIPLE_CHOICE') {
+          <p class="hint">Select all that apply</p>
+        }
+
+        <div class="options">
+          @for (option of currentQuestion()!.options; track option.id) {
+            <button
+              class="option-btn"
+              [class.selected]="isSelected(currentQuestion()!.id, option.id)"
+              [class.multi]="currentQuestion()!.questionType === 'MULTIPLE_CHOICE'"
+              (click)="selectOption(currentQuestion()!.id, option.id, currentQuestion()!.questionType)"
+            >
+              <span class="option-indicator">
+                @if (isSelected(currentQuestion()!.id, option.id)) {
+                  @if (currentQuestion()!.questionType === 'MULTIPLE_CHOICE') {
+                    &#10003;
+                  } @else {
+                    &#9679;
+                  }
+                }
+              </span>
+              <span class="option-text">{{ option.text }}</span>
+            </button>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Navigation dots -->
+    <div class="question-dots">
+      @for (q of quiz()!.questions; track q.id; let i = $index) {
+        <button
+          class="dot"
+          [class.active]="i === currentIndex()"
+          [class.answered]="answers().has(q.id)"
+          (click)="goToQuestion(i)"
+        >
+          {{ i + 1 }}
+        </button>
+      }
+    </div>
+
+    <!-- Footer -->
+    <div class="quiz-footer">
+      <button
+        class="btn btn-secondary"
+        [disabled]="currentIndex() === 0"
+        (click)="prevQuestion()"
+      >
+        Previous
+      </button>
+
+      <span class="answered-count">{{ answeredCount() }} / {{ quiz()!.questions.length }} answered</span>
+
+      @if (currentIndex() < quiz()!.questions.length - 1) {
+        <button class="btn btn-primary" (click)="nextQuestion()">Next</button>
+      } @else {
+        <button
+          class="btn btn-success"
+          [disabled]="submitting()"
+          (click)="submitQuiz()"
+        >
+          {{ submitting() ? 'Submitting...' : 'Submit Quiz' }}
+        </button>
+      }
+    </div>
+  </div>
+}

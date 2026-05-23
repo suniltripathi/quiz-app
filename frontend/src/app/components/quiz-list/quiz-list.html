@@ -1,0 +1,40 @@
+<div class="page-header">
+  <h1>Available Quizzes</h1>
+  <p>Choose a quiz to test your knowledge</p>
+</div>
+
+@if (loading()) {
+  <div class="loading-spinner"></div>
+} @else if (error()) {
+  <div class="error-card card">
+    <p class="error-message">{{ error() }}</p>
+    <button class="btn btn-primary" (click)="loadQuizzes()">Try Again</button>
+  </div>
+} @else if (quizzes().length === 0) {
+  <div class="empty-state card">
+    <div class="empty-icon">?</div>
+    <h2>No quizzes available</h2>
+    <p>Be the first to create a quiz!</p>
+    <a routerLink="/quizzes/create" class="btn btn-primary btn-lg">Create Quiz</a>
+  </div>
+} @else {
+  <div class="quiz-grid">
+    @for (quiz of quizzes(); track quiz.id) {
+      <div class="card card-hover quiz-card">
+        <div class="quiz-card-header">
+          <h2 class="quiz-title">{{ quiz.title }}</h2>
+          <span class="badge badge-primary">{{ quiz.questionCount }} questions</span>
+        </div>
+        <p class="quiz-description">{{ quiz.description }}</p>
+        <div class="quiz-meta">
+          @if (quiz.timeLimitMinutes) {
+            <span class="meta-item">{{ quiz.timeLimitMinutes }} min</span>
+          }
+        </div>
+        <div class="quiz-actions">
+          <a [routerLink]="['/quizzes', quiz.id]" class="btn btn-primary">View Details</a>
+        </div>
+      </div>
+    }
+  </div>
+}
