@@ -1,0 +1,140 @@
+<div class="page-header">
+  <h1>Create New Quiz</h1>
+  <p>Build your quiz with custom questions and answers</p>
+</div>
+
+@if (error()) {
+  <div class="error-banner">{{ error() }}</div>
+}
+
+<div class="create-form">
+  <!-- Quiz Details -->
+  <div class="card section-card">
+    <h2 class="section-title">Quiz Details</h2>
+
+    <div class="form-group">
+      <label class="form-label" for="title">Title *</label>
+      <input
+        id="title"
+        class="form-control"
+        type="text"
+        placeholder="Enter quiz title"
+        [ngModel]="title()"
+        (ngModelChange)="title.set($event)"
+      />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="description">Description</label>
+      <textarea
+        id="description"
+        class="form-control"
+        placeholder="Enter quiz description"
+        rows="3"
+        [ngModel]="description()"
+        (ngModelChange)="description.set($event)"
+      ></textarea>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="timeLimit">Time Limit (minutes, optional)</label>
+      <input
+        id="timeLimit"
+        class="form-control"
+        type="number"
+        min="1"
+        placeholder="No time limit"
+        [ngModel]="timeLimitMinutes()"
+        (ngModelChange)="timeLimitMinutes.set($event || null)"
+      />
+    </div>
+  </div>
+
+  <!-- Questions -->
+  @for (q of questions(); track $index; let i = $index) {
+    <div class="card section-card question-section">
+      <div class="question-header">
+        <h2 class="section-title">Question {{ i + 1 }}</h2>
+        @if (questions().length > 1) {
+          <button class="btn btn-sm btn-danger" (click)="removeQuestion(i)">Remove</button>
+        }
+      </div>
+
+      <div class="form-row">
+        <div class="form-group flex-grow">
+          <label class="form-label">Question Text *</label>
+          <input
+            class="form-control"
+            type="text"
+            placeholder="Enter question"
+            [ngModel]="q.text"
+            (ngModelChange)="updateQuestionText(i, $event)"
+          />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Type</label>
+          <select class="form-control" [ngModel]="q.questionType" (ngModelChange)="updateQuestionType(i, $event)">
+            <option value="SINGLE_CHOICE">Single Choice</option>
+            <option value="MULTIPLE_CHOICE">Multiple Choice</option>
+            <option value="TRUE_FALSE">True / False</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Points</label>
+          <input
+            class="form-control"
+            type="number"
+            min="1"
+            [ngModel]="q.points"
+            (ngModelChange)="updateQuestionPoints(i, $event)"
+          />
+        </div>
+      </div>
+
+      <label class="form-label">Options * <span class="hint-text">(Mark correct answers)</span></label>
+      <div class="options-list">
+        @for (opt of q.options; track $index; let j = $index) {
+          <div class="option-row">
+            <button
+              class="correct-toggle"
+              [class.active]="opt.correct"
+              (click)="toggleCorrect(i, j)"
+              [title]="opt.correct ? 'Marked as correct' : 'Mark as correct'"
+            >
+              {{ opt.correct ? '&#10003;' : '' }}
+            </button>
+            <input
+              class="form-control"
+              type="text"
+              [placeholder]="'Option ' + (j + 1)"
+              [ngModel]="opt.text"
+              (ngModelChange)="updateOptionText(i, j, $event)"
+              [disabled]="q.questionType === 'TRUE_FALSE'"
+            />
+            @if (q.questionType !== 'TRUE_FALSE' && q.options.length > 2) {
+              <button class="btn btn-sm btn-secondary remove-opt" (click)="removeOption(i, j)">&times;</button>
+            }
+          </div>
+        }
+      </div>
+      @if (q.questionType !== 'TRUE_FALSE') {
+        <button class="btn btn-sm btn-secondary add-option-btn" (click)="addOption(i)">+ Add Option</button>
+      }
+    </div>
+  }
+
+  <button class="btn btn-secondary add-question-btn" (click)="addQuestion()">+ Add Question</button>
+
+  <div class="submit-section">
+    <button
+      class="btn btn-primary btn-lg"
+      [disabled]="!isValid() || submitting()"
+      (click)="submitQuiz()"
+    >
+      {{ submitting() ? 'Creating...' : 'Create Quiz' }}
+    </button>
+  </div>
+</div>

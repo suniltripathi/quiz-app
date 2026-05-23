@@ -1,0 +1,44 @@
+@if (loading()) {
+  <div class="loading-spinner"></div>
+} @else if (quiz()) {
+  <div class="quiz-detail">
+    <a routerLink="/quizzes" class="back-link">&larr; Back to Quizzes</a>
+
+    <div class="card quiz-info-card">
+      <h1>{{ quiz()!.title }}</h1>
+      <p class="description">{{ quiz()!.description }}</p>
+
+      <div class="quiz-stats">
+        <div class="stat">
+          <span class="stat-value">{{ quiz()!.questions.length }}</span>
+          <span class="stat-label">Questions</span>
+        </div>
+        @if (quiz()!.timeLimitMinutes) {
+          <div class="stat">
+            <span class="stat-value">{{ quiz()!.timeLimitMinutes }}</span>
+            <span class="stat-label">Minutes</span>
+          </div>
+        }
+        <div class="stat">
+          <span class="stat-value">{{ getTotalPoints() }}</span>
+          <span class="stat-label">Points</span>
+        </div>
+      </div>
+
+      <div class="question-types">
+        @for (type of getQuestionTypes(); track type.name) {
+          <span class="badge badge-primary">{{ type.count }}x {{ type.name }}</span>
+        }
+      </div>
+
+      <a [routerLink]="['/quizzes', quiz()!.id, 'take']" class="btn btn-primary btn-lg start-btn">
+        Start Quiz
+      </a>
+    </div>
+  </div>
+} @else {
+  <div class="card" style="text-align: center; padding: 2rem;">
+    <h2>Quiz not found</h2>
+    <a routerLink="/quizzes" class="btn btn-primary" style="margin-top: 1rem;">Back to Quizzes</a>
+  </div>
+}

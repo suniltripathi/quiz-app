@@ -1,0 +1,101 @@
+.quiz-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.25rem;
+}
+
+.quiz-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.quiz-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.quiz-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.quiz-description {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  flex: 1;
+  margin-bottom: 1rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.quiz-meta {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+
+  .meta-item {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+
+    &::before {
+      content: '';
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      background: var(--text-secondary);
+      mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='M12 6v6l4 2'/%3E%3C/svg%3E");
+      mask-size: contain;
+      -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='M12 6v6l4 2'/%3E%3C/svg%3E");
+      -webkit-mask-size: contain;
+    }
+  }
+}
+
+.quiz-actions {
+  margin-top: auto;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem 1.5rem;
+
+  .empty-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  h2 {
+    margin-bottom: 0.5rem;
+    font-size: 1.25rem;
+  }
+
+  p {
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+  }
+}
+
+.error-card {
+  text-align: center;
+  padding: 2rem;
+
+  .error-message {
+    color: var(--danger);
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .quiz-grid {
+    grid-template-columns: 1fr;
+  }
+}
